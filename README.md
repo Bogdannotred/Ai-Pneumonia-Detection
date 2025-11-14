@@ -1,6 +1,1 @@
-# Pneumonia-Detection
-# Pneumonia-Detection
-# Pneumonia-Detection
-# Pneumonia-Detection
-# Pneumonia-Detection
-# Pneumonia-Detection
+# Ai-Pneumonia-Detection-Train-UI
