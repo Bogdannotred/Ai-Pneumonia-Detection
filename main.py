@@ -1,4 +1,4 @@
-from fastapi import FastAPI , UploadFile, File
+
 from tensorflow.keras.models import load_model
 import tensorflow as tf
 import numpy as np
@@ -14,8 +14,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 import streamlit as st
 
 #load model
-model = load_model("best_model.h5")
-
+model = load_model("final_pneumonia_model.h5")
 def grad_cam(model, img_array, layer_name):
     grad_model = tf.keras.models.Model(
         inputs=model.input,
@@ -48,7 +47,7 @@ def main():
             img_array = np.expand_dims(img_array, axis=0) 
             img_array = preprocess_input(img_array)
             predictions = model.predict(img_array)
-            heatmap, class_idx = grad_cam(model , img_array , 'block5_conv3')
+            heatmap, class_idx = grad_cam(model , img_array , 'conv5_block16_concat')
             heatmap = np.uint8(255 * heatmap)
             heatmap = cv2.applyColorMap(heatmap , cv2.COLORMAP_JET)
 
