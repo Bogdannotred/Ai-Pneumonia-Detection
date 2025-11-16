@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 
 # Load model
-model = load_model("best_model.h5")
+model = load_model("final_pneumonia_model.h5")
 
 
 IMG_SIZE = (224, 224)  

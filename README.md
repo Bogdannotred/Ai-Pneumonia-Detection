@@ -8,7 +8,7 @@
 
 ## Overview
 
-## “The model accuracy is 70%. Work in progress…”
+## “The model accuracy is 86%. Work in progress…”
 
 This project is an AI-powered pneumonia detection system that uses deep learning to analyze chest X-ray images and predict whether a patient has pneumonia or not. The system consists of a machine learning model trained on chest X-ray images, a FastAPI backend for inference, and a Streamlit frontend for user interaction.
 
