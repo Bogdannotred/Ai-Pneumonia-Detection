@@ -47,7 +47,7 @@ def main():
                 if st.button("🩺 Process Image", use_container_width=True):
                     with st.spinner("Processing..."):
                         bytes_data = uploaded_file.getvalue()
-                        img = Image.open(io.BytesIO(bytes_data)).convert("RGB") 
+                        img = Image.open(io.BytesIO(bytes_data)).convert("RGB")
                         img = img.resize((224, 224))
                         img_array = np.array(img)
                         img_array = np.expand_dims(img_array, axis=0) 
