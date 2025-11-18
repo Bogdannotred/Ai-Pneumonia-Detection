@@ -15,6 +15,7 @@ import streamlit as st
 
 
 from gradcam_visual import grad_cam
+from gradcam_visual import heatmap
 
 #save it in cache for better performance
 @st.cache_resource
@@ -42,16 +43,8 @@ def main():
                             img_array = preprocess_input(img_array)
                             predictions = model.predict(img_array)
                             heatmap, class_idx = grad_cam(model , img_array , 'conv5_block16_concat')
-                            heatmap = np.uint8(255 * heatmap)
-                            heatmap = cv2.applyColorMap(heatmap , cv2.COLORMAP_JET)
-
-                            #transform original image into a cv2 img
-                            img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
-                            #take the values from oringinal image and resize it for heatmap
-                            heatmap = cv2.resize(heatmap, (img_cv.shape[1], img_cv.shape[0])) 
-                            #take the heatmap and superimpose it on original image
-                            superimposed_img = cv2.addWeighted(img_cv, 0.6, heatmap, 0.4, 0)
-
+                            superimposed_img = heatmap(img , heatmap)
+                            #save image to file
                             cv2.imwrite("heatmap.jpg", superimposed_img)
 
                             #save image into memory as .jpg

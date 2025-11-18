@@ -24,3 +24,16 @@ def grad_cam(model, img_array, layer_name):
 
     return heatmap.numpy(), class_idx
 
+def heatmap(img, heatmap):
+    heatmap = np.uint8(255 * heatmap)
+
+    heatmap = cv2.applyColorMap(heatmap , cv2.COLORMAP_JET)
+    #transform original image into a cv2 img
+    img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)  
+    #take the values from oringinal image and resize it for heatmap   
+    heatmap = cv2.resize(heatmap, (img_cv.shape[1], img_cv.shape[0]))     
+    #take the heatmap and superimpose it on original image   
+    superimposed_img = cv2.addWeighted(img_cv, 0.6, heatmap, 0.4, 0)
+
+    return superimposed_img
+
