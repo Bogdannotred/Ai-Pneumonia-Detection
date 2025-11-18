@@ -1,26 +1,22 @@
-
-from tensorflow.keras.models import load_model
-import tensorflow as tf
 import numpy as np
-import cv2
 import io
 import base64
-import matplotlib
-matplotlib.use("Agg") 
-import matplotlib.pyplot as plt
 from PIL import Image
-import io
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 import streamlit as st
+import cv2
 
-
+#local imports
 from gradcam_visual import grad_cam
 from gradcam_visual import over_heatmap
+from loading_model import load_model_cache
 
-#save it in cache for better performance
-@st.cache_resource
-def load_model_cache():
-    return load_model("final_pneumonia_model.h5")
+def preprocessing_for_model(image):
+    img = image.resize((224, 224))
+    img_array = np.array(img)
+    img_array = np.expand_dims(img_array, axis=0) 
+    img_array = preprocess_input(img_array)
+    return img_array
 
 
 def main():
@@ -37,21 +33,16 @@ def main():
                         with st.spinner("Processing..."):
                             bytes_data = uploaded_file.getvalue()
                             img = Image.open(io.BytesIO(bytes_data)).convert("RGB")
-                            img = img.resize((224, 224))
-                            img_array = np.array(img)
-                            img_array = np.expand_dims(img_array, axis=0) 
-                            img_array = preprocess_input(img_array)
+                            img_array = preprocessing_for_model(img)
                             predictions = model.predict(img_array)
                             heatmap, class_idx = grad_cam(model , img_array , 'conv5_block16_concat')
                             superimposed_image = over_heatmap(img , heatmap)
                             cv2.imwrite("heatmap.jpg", superimposed_image)
-
                             #save image into memory as .jpg
                             succes , encoded_image = cv2.imencode('.jpg' , superimposed_image)
                             #encode to bytes
                             image_bytes = encoded_image.tobytes()
                             image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-
                             decodebase64 = base64.b64decode(image_base64)
                             #display image with gradcam
                             left, right = st.columns(2)
