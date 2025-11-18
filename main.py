@@ -14,35 +14,16 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 import streamlit as st
 
 
+from gradcam_visual import grad_cam
+
 #save it in cache for better performance
 @st.cache_resource
 def load_model_cache():
     return load_model("final_pneumonia_model.h5")
 
 
-def grad_cam(model, img_array, layer_name):
-    grad_model = tf.keras.models.Model(
-        inputs=model.input,
-        outputs=[model.get_layer(layer_name).output, model.output]
-    )
-    with tf.GradientTape() as tape:
-        conv_outputs, predictions = grad_model(img_array, training=False)
-        pred_value = predictions[0]
-        class_idx = 1 if pred_value > 0.5 else 0
-
-    grads = tape.gradient(pred_value, conv_outputs)
-    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
-
-    conv_outputs = conv_outputs[0]
-    heatmap = conv_outputs @ pooled_grads[..., tf.newaxis]
-    heatmap = tf.squeeze(heatmap)
-    heatmap = tf.maximum(heatmap, 0) / (tf.reduce_max(heatmap) + 1e-8)
-
-    return heatmap.numpy(), class_idx
-
-
 def main():
-    model =load_model_cache()
+    model = load_model_cache()
     st.set_page_config(page_title="Pneumonia Detection", layout="wide", page_icon="🩺")
     st.title("🩺 Pneumonia Detection with Grad-CAM")
     uploaded_file = st.file_uploader("Choose a image ...", type=['jpg' , 'png'])
